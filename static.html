@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>✂️ AI 抠图 — 一键去除背景</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 16px 60px;
+  }
+
+  .header { text-align: center; margin-bottom: 36px; }
+  .header h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .header p {
+    color: rgba(255,255,255,0.8);
+    margin-top: 8px;
+    font-size: 1rem;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .upload-zone {
+    border: 2.5px dashed #c4b5fd;
+    border-radius: 14px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #faf5ff;
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .upload-zone:hover, .upload-zone.drag {
+    border-color: #7c3aed;
+    background: #f3e8ff;
+  }
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .upload-icon { font-size: 2.8rem; margin-bottom: 10px; }
+  .upload-zone h3 { font-size: 1.05rem; color: #4c1d95; font-weight: 600; }
+  .upload-zone p { font-size: 0.82rem; color: #7c3aed; margin-top: 4px; }
+
+  .btn-process {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-process:hover:not(:disabled) {
+    background: linear-gradient(135deg, #6d28d9, #5b21b6);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(124,58,237,0.35);
+  }
+  .btn-process:disabled { background: #d1d5db; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-box {
+    display: none;
+    margin-top: 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #dc2626;
+    font-size: 0.88rem;
+    align-items: center;
+    gap: 8px;
+  }
+  .error-box.show { display: flex; }
+
+  .compare {
+    display: none;
+    margin-top: 28px;
+    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .compare.show { display: grid; }
+
+  .img-card {
+    border-radius: 14px;
+    overflow: hidden;
+    background: #f9fafb;
+    border: 1.5px solid #e5e7eb;
+  }
+  .img-card-header {
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e5e7eb;
+    background: #fff;
+  }
+  .img-card-body {
+    padding: 12px;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: repeating-conic-gradient(#e5e7eb 0% 25%, #fff 0% 50%) 0 0 / 16px 16px;
+  }
+  .img-card-body img { max-width: 100%; max-height: 260px; border-radius: 6px; display: block; }
+  .img-placeholder { color: #d1d5db; font-size: 0.85rem; }
+
+  .btn-download {
+    display: none;
+    margin-top: 16px;
+    width: 100%;
+    padding: 12px;
+    background: #f0fdf4;
+    border: 1.5px solid #86efac;
+    border-radius: 12px;
+    color: #16a34a;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-download:hover { background: #dcfce7; }
+  .btn-download.show { display: block; }
+
+  .footer {
+    margin-top: 28px;
+    text-align: center;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.78rem;
+  }
+
+  @media (max-width: 500px) {
+    .card { padding: 24px 18px; }
+    .compare { grid-template-columns: 1fr; }
+    .header h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>✂️ AI 抠图</h1>
+  <p>一键去除图片背景，保留透明通道，免费使用</p>
+</div>
+
+<div class="card">
+
+  <div class="upload-zone" id="zone">
+    <input type="file" id="upload" accept="image/*" />
+    <div class="upload-icon">🖼️</div>
+    <h3>拖拽图片到此处，或点击上传</h3>
+    <p>支持 JPG、PNG、WebP，最大 10MB</p>
+  </div>
+
+  <button class="btn-process" id="processBtn" disabled>
+    <div class="spinner" id="spinner"></div>
+    <span id="btnText">🚀 开始抠图</span>
+  </button>
+
+  <div class="error-box" id="errorBox">
+    <span>⚠️</span>
+    <span id="errorText"></span>
+  </div>
+
+  <div class="compare" id="compare">
+    <div class="img-card">
+      <div class="img-card-header">📷 原图</div>
+      <div class="img-card-body">
+        <img id="originalImg" src="" alt="原图" />
+      </div>
+    </div>
+    <div class="img-card">
+      <div class="img-card-header">✨ 抠图结果</div>
+      <div class="img-card-body" id="resultBody">
+        <span class="img-placeholder">处理后结果显示在这里</span>
+      </div>
+    </div>
+  </div>
+
+  <a class="btn-download" id="downloadBtn" href="#" download="removed-bg.png">⬇️ 下载透明 PNG</a>
+
+</div>
+
+<div class="footer">图片仅用于处理，不做任何存储 · Powered by Remove.bg</div>
+
+<script>
+  // API Key 保存在后台（前端不可见）
+  const API_KEY = 'RdLCxiPkX3GDxYYi3Yr8m98Z';
+
+  const zone = document.getElementById('zone');
+  const upload = document.getElementById('upload');
+  const processBtn = document.getElementById('processBtn');
+  const btnText = document.getElementById('btnText');
+  const spinner = document.getElementById('spinner');
+  const errorBox = document.getElementById('errorBox');
+  const errorText = document.getElementById('errorText');
+  const compare = document.getElementById('compare');
+  const originalImg = document.getElementById('originalImg');
+  const resultBody = document.getElementById('resultBody');
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  let selectedFile = null;
+
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag');
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+
+  upload.addEventListener('change', () => {
+    if (upload.files[0]) handleFile(upload.files[0]);
+  });
+
+  function handleFile(f) {
+    if (f.size > 10 * 1024 * 1024) {
+      showError('文件太大，请上传 10MB 以内的图片');
+      return;
+    }
+    selectedFile = f;
+    originalImg.src = URL.createObjectURL(f);
+    compare.classList.add('show');
+    resultBody.innerHTML = '<span class="img-placeholder">点击"开始抠图"处理</span>';
+    downloadBtn.classList.remove('show');
+    hideError();
+    processBtn.disabled = false;
+  }
+
+  processBtn.addEventListener('click', async () => {
+    if (!selectedFile) return;
+
+    setLoading(true);
+    hideError();
+
+    try {
+      const formData = new FormData();
+      formData.append('image_file', selectedFile);
+      formData.append('size', 'auto');
+
+      const res = await fetch('https://api.remove.bg/v1.0/removebg', {
+        method: 'POST',
+        headers: { 'X-Api-Key': API_KEY },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        let msg = '抠图失败';
+        try { const j = await res.json(); msg = j.errors?.[0]?.title || msg; } catch {}
+        throw new Error(msg);
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = '抠图结果';
+      resultBody.innerHTML = '';
+      resultBody.appendChild(img);
+
+      downloadBtn.href = url;
+      downloadBtn.classList.add('show');
+    } catch (e) {
+      showError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  function setLoading(v) {
+    processBtn.disabled = v;
+    spinner.style.display = v ? 'block' : 'none';
+    btnText.textContent = v ? '处理中...' : '🚀 开始抠图';
+  }
+
+  function showError(msg) {
+    errorText.textContent = msg;
+    errorBox.classList.add('show');
+  }
+
+  function hideError() {
+    errorBox.classList.remove('show');
+  }
+</script>
+</body>
+</html>
