@@ -1,0 +1,8 @@
+name = "image-bg-remover-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "image-bg-remover-db"
+database_id = "2123d822-c3f9-4d42-818f-2cd790db1d1c"
