@@ -5,7 +5,7 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    const REDIRECT_URI = 'https://image-background-remover.quest?callback=1';
+    const REDIRECT_URI = 'https://image-background-remover.quest';
     const FRONTEND_URL = env.FRONTEND_URL || 'https://image-background-remover.quest/static.html';
 
     function corsHeaders() {
@@ -32,8 +32,8 @@ export default {
       return Response.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`, 302);
     }
 
-    // OAuth 回调
-    if (url.searchParams.get('callback') === '1' && url.searchParams.get('code')) {
+    // OAuth 回调（根路径 + code 参数）
+    if (url.pathname === '/' && url.searchParams.get('code')) {
       const code = url.searchParams.get('code');
       if (!code) return Response.redirect(FRONTEND_URL + '?error=no_code', 302);
 
