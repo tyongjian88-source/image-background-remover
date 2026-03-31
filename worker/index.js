@@ -5,7 +5,7 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    const REDIRECT_URI = 'https://image-bg-remover-api.tyongjian88.workers.dev/auth/callback';
+    const REDIRECT_URI = 'https://image-background-remover.quest/auth/callback';
     const FRONTEND_URL = env.FRONTEND_URL || 'https://image-background-remover.quest/static.html';
 
     function corsHeaders() {
