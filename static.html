@@ -13,21 +13,49 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 16px 60px;
+    padding: 0 16px 60px;
   }
-  .header { text-align: center; margin-bottom: 36px; }
+
+  /* ── 顶部导航栏 ── */
+  .navbar {
+    width: 100%; max-width: 760px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0; margin-bottom: 16px;
+  }
+  .navbar-brand { font-size: 1.3rem; font-weight: 800; color: #fff; text-decoration: none; }
+  .navbar-right { display: flex; align-items: center; gap: 12px; }
+  .credits-badge {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px; padding: 4px 14px;
+    color: #fff; font-size: 0.85rem; font-weight: 600;
+    display: none; align-items: center; gap: 6px;
+  }
+  .credits-badge.show { display: flex; }
+  .credits-badge .credits-num { font-size: 1rem; font-weight: 800; color: #fde68a; }
+  .btn-nav {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px; padding: 6px 16px;
+    color: #fff; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-nav:hover { background: rgba(255,255,255,0.25); }
+
+  /* ── 主标题 ── */
+  .header { text-align: center; margin-bottom: 28px; }
   .header h1 { font-size: 2.4rem; font-weight: 800; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.2); }
   .header p { color: rgba(255,255,255,0.8); margin-top: 8px; font-size: 1rem; }
+
+  /* ── 卡片 ── */
   .card {
     background: #fff; border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.2);
     padding: 36px 32px; width: 100%; max-width: 680px;
   }
 
-  /* Login */
-  .login-section {
-    text-align: center; padding: 20px 0 10px;
-  }
+  /* ── 登录 ── */
+  .login-section { text-align: center; padding: 20px 0 10px; }
   .user-bar {
     display: flex; align-items: center; gap: 12px;
     background: #f9f5ff; border-radius: 12px; padding: 10px 16px;
@@ -40,7 +68,6 @@
     padding: 4px 12px; color: #7c3aed; font-size: 0.82rem; cursor: pointer;
   }
   .btn-logout:hover { background: #f3e8ff; }
-
   .btn-google {
     display: inline-flex; align-items: center; gap: 10px;
     background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px;
@@ -52,7 +79,7 @@
   .btn-google svg { width: 20px; height: 20px; }
   .login-hint { color: #9ca3af; font-size: 0.82rem; margin-top: 10px; }
 
-  /* Upload */
+  /* ── 上传区 ── */
   .upload-zone {
     border: 2.5px dashed #c4b5fd; border-radius: 14px;
     padding: 40px 20px; text-align: center; cursor: pointer;
@@ -113,22 +140,83 @@
   .btn-download:hover { background: #dcfce7; }
   .btn-download.show { display: block; }
 
+  /* ── 升级弹窗 ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 100;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 20px;
+    max-width: 540px; width: 100%; padding: 36px 32px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .modal h2 { font-size: 1.6rem; font-weight: 800; color: #1f2937; margin-bottom: 8px; }
+  .modal p { color: #6b7280; font-size: 0.95rem; margin-bottom: 28px; }
+  .plans { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .plan {
+    border: 2px solid #e5e7eb; border-radius: 14px; padding: 16px 10px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .plan:hover { border-color: #7c3aed; background: #faf5ff; }
+  .plan.featured { border-color: #7c3aed; background: #f3e8ff; }
+  .plan-price { font-size: 1.4rem; font-weight: 800; color: #7c3aed; }
+  .plan-desc { font-size: 0.78rem; color: #6b7280; margin-top: 4px; }
+  .plan-badge {
+    display: inline-block; background: #7c3aed; color: #fff;
+    font-size: 0.65rem; font-weight: 700; border-radius: 6px;
+    padding: 2px 8px; margin-bottom: 6px;
+  }
+  .plans-sub { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+  .plan-sub {
+    border: 2px solid #e5e7eb; border-radius: 14px; padding: 14px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .plan-sub:hover { border-color: #16a34a; background: #f0fdf4; }
+  .plan-sub.featured { border-color: #16a34a; background: #dcfce7; }
+  .plan-sub-price { font-size: 1.2rem; font-weight: 800; color: #16a34a; }
+  .plan-sub-desc { font-size: 0.78rem; color: #6b7280; margin-top: 4px; }
+  .section-label { font-size: 0.8rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; text-align: left; }
+  .btn-close-modal {
+    background: none; border: none; color: #9ca3af;
+    font-size: 0.9rem; cursor: pointer; text-decoration: underline;
+  }
+  .btn-close-modal:hover { color: #6b7280; }
+
   .footer { margin-top: 28px; text-align: center; color: rgba(255,255,255,0.6); font-size: 0.78rem; }
 
   @media (max-width: 500px) {
     .card { padding: 24px 18px; }
     .compare { grid-template-columns: 1fr; }
     .header h1 { font-size: 1.8rem; }
+    .plans { grid-template-columns: 1fr; }
+    .plans-sub { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
+<!-- 导航栏 -->
+<div class="navbar">
+  <a href="/static.html" class="navbar-brand">✂️ AI 抠图</a>
+  <div class="navbar-right">
+    <div class="credits-badge" id="creditsBadge">
+      ⚡ 剩余 <span class="credits-num" id="creditsNum">0</span> 次
+    </div>
+    <a href="/pricing.html" class="btn-nav">定价</a>
+    <button class="btn-nav" id="navUpgradeBtn" onclick="showUpgradeModal()" style="display:none">升级套餐</button>
+  </div>
+</div>
+
+<!-- 主标题 -->
 <div class="header">
   <h1>✂️ AI 抠图</h1>
   <p>一键去除图片背景，保留透明通道</p>
 </div>
 
+<!-- 主卡片 -->
 <div class="card">
 
   <!-- 登录区域 -->
@@ -137,7 +225,7 @@
       <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       使用 Google 账号登录
     </button>
-    <p class="login-hint">登录后即可使用 AI 抠图功能</p>
+    <p class="login-hint">注册即送 3 次免费抠图额度</p>
   </div>
 
   <!-- 已登录用户栏 -->
@@ -147,7 +235,7 @@
     <button class="btn-logout" onclick="logout()">退出</button>
   </div>
 
-  <!-- 功能区（登录后显示） -->
+  <!-- 功能区 -->
   <div id="mainContent" style="display:none">
     <div class="upload-zone" id="zone">
       <input type="file" id="upload" accept="image/*" />
@@ -183,14 +271,53 @@
 
 <div class="footer">图片仅用于处理，不做任何存储 · Powered by Remove.bg</div>
 
+<!-- 升级弹窗 -->
+<div class="modal-overlay" id="upgradeModal">
+  <div class="modal">
+    <h2>🚀 额度已用完</h2>
+    <p>购买积分包或订阅套餐，继续使用 AI 抠图功能</p>
+
+    <div class="section-label">积分包（一次性，永久有效）</div>
+    <div class="plans">
+      <div class="plan" onclick="gotoPricing()">
+        <div class="plan-price">$4.99</div>
+        <div class="plan-desc">10 次抠图</div>
+      </div>
+      <div class="plan featured" onclick="gotoPricing()">
+        <div class="plan-badge">热门</div>
+        <div class="plan-price">$12.99</div>
+        <div class="plan-desc">30 次抠图</div>
+      </div>
+      <div class="plan" onclick="gotoPricing()">
+        <div class="plan-price">$29.99</div>
+        <div class="plan-desc">80 次抠图</div>
+      </div>
+    </div>
+
+    <div class="section-label">月度订阅套餐</div>
+    <div class="plans-sub">
+      <div class="plan-sub" onclick="gotoPricing()">
+        <div class="plan-sub-price">$9.99<span style="font-size:0.75rem;font-weight:400"> / 月</span></div>
+        <div class="plan-sub-desc">25 次 / 月</div>
+      </div>
+      <div class="plan-sub featured" onclick="gotoPricing()">
+        <div class="plan-sub-price">$19.99<span style="font-size:0.75rem;font-weight:400"> / 月</span></div>
+        <div class="plan-sub-desc">60 次 / 月</div>
+      </div>
+    </div>
+
+    <button class="btn-close-modal" onclick="closeUpgradeModal()">暂不升级</button>
+  </div>
+</div>
+
 <script>
   const API_BASE = 'https://image-bg-remover-api.tyongjian88.workers.dev';
-  const API_KEY = 'RdLCxiPkX3GDxYYi3Yr8m98Z';
+  const REMOVEBG_KEY = 'RdLCxiPkX3GDxYYi3Yr8m98Z';
 
   let session = null;
   let selectedFile = null;
 
-  // 检查是否有 session 参数（OAuth 回调）
+  // 检查 OAuth 回调参数
   const urlParams = new URLSearchParams(window.location.search);
   const sessionParam = urlParams.get('session');
   const errorParam = urlParams.get('error');
@@ -199,14 +326,12 @@
     localStorage.setItem('session', sessionParam);
     window.history.replaceState({}, '', '/static.html');
   }
-
   if (errorParam) {
     alert('登录失败：' + errorParam);
     window.history.replaceState({}, '', '/static.html');
   }
 
-  // 初始化
-  function init() {
+  async function init() {
     const stored = localStorage.getItem('session');
     if (stored) {
       try {
@@ -214,12 +339,26 @@
         if (data.exp > Date.now()) {
           session = stored;
           showLoggedIn(data);
+          await loadCredits();
           return;
         }
       } catch {}
       localStorage.removeItem('session');
     }
     showLoggedOut();
+  }
+
+  async function loadCredits() {
+    try {
+      const res = await fetch(API_BASE + '/credits', {
+        headers: { 'Authorization': 'Bearer ' + session }
+      });
+      const data = await res.json();
+      const credits = data.credits ?? 0;
+      document.getElementById('creditsNum').textContent = credits;
+      document.getElementById('creditsBadge').classList.add('show');
+      document.getElementById('navUpgradeBtn').style.display = credits <= 2 ? 'block' : 'none';
+    } catch {}
   }
 
   function showLoggedIn(data) {
@@ -234,6 +373,8 @@
     document.getElementById('loginSection').style.display = 'block';
     document.getElementById('userBar').style.display = 'none';
     document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('creditsBadge').classList.remove('show');
+    document.getElementById('navUpgradeBtn').style.display = 'none';
   }
 
   function loginWithGoogle() {
@@ -245,6 +386,23 @@
     session = null;
     showLoggedOut();
   }
+
+  function showUpgradeModal() {
+    document.getElementById('upgradeModal').classList.add('show');
+  }
+
+  function closeUpgradeModal() {
+    document.getElementById('upgradeModal').classList.remove('show');
+  }
+
+  function gotoPricing() {
+    window.location.href = '/pricing.html';
+  }
+
+  // 点击弹窗背景关闭
+  document.getElementById('upgradeModal').addEventListener('click', function(e) {
+    if (e.target === this) closeUpgradeModal();
+  });
 
   // 上传与抠图
   const zone = document.getElementById('zone');
@@ -279,16 +437,42 @@
   }
 
   processBtn.addEventListener('click', async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || !session) return;
     setLoading(true); hideError();
+
     try {
+      // 先扣积分
+      const consumeRes = await fetch(API_BASE + '/credits/consume', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + session }
+      });
+
+      if (consumeRes.status === 401) {
+        logout();
+        throw new Error('登录已过期，请重新登录');
+      }
+      if (consumeRes.status === 402) {
+        setLoading(false);
+        showUpgradeModal();
+        return;
+      }
+      if (!consumeRes.ok) throw new Error('积分扣除失败，请重试');
+
+      const consumeData = await consumeRes.json();
+      // 更新显示积分
+      document.getElementById('creditsNum').textContent = consumeData.remaining;
+      if (consumeData.remaining <= 2) {
+        document.getElementById('navUpgradeBtn').style.display = 'block';
+      }
+
+      // 调用抠图 API
       const formData = new FormData();
       formData.append('image_file', selectedFile);
       formData.append('size', 'auto');
 
       const res = await fetch('https://api.remove.bg/v1.0/removebg', {
         method: 'POST',
-        headers: { 'X-Api-Key': API_KEY },
+        headers: { 'X-Api-Key': REMOVEBG_KEY },
         body: formData,
       });
 
@@ -304,6 +488,12 @@
       img.src = url; img.alt = '抠图结果';
       resultBody.innerHTML = ''; resultBody.appendChild(img);
       downloadBtn.href = url; downloadBtn.classList.add('show');
+
+      // 积分用完时弹窗提示
+      if (consumeData.remaining === 0) {
+        setTimeout(() => showUpgradeModal(), 1500);
+      }
+
     } catch (e) {
       showError(e.message);
     } finally { setLoading(false); }
