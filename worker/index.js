@@ -38,25 +38,6 @@ export default {
       return new Response(null, { headers: corsHeaders() });
     }
 
-    // ── 初始化数据库表 ──
-    await env.DB.exec(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        google_id TEXT UNIQUE NOT NULL,
-        email TEXT,
-        name TEXT,
-        avatar TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        last_login DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-      CREATE TABLE IF NOT EXISTS user_credits (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        google_id TEXT UNIQUE NOT NULL,
-        credits INTEGER DEFAULT 0,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-
     // ── Google OAuth 登录入口 ──
     if (url.pathname === '/auth/login') {
       const params = new URLSearchParams({
