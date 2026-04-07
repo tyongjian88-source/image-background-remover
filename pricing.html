@@ -2,98 +2,60 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI 抠图工具 - 定价方案</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>定价 - AI 抠图</title>
+<script src="https://www.paypal.com/sdk/js?client-id=ATu2bK9T85J56j0-L40yJ0D7rS3pLq1O_47z3gQeQk9nS6yY4O47S2u_z1b63H52uS1I7g5lKz4n0L3x&currency=USD"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f9fafb;color:#1f2937;min-height:100vh;padding:3rem 1rem}
-.container{max-width:64rem;margin:0 auto;background:#fff;padding:2rem;border-radius:1rem;box-shadow:0 10px 30px rgba(0,0,0,0.1)}
-h1{font-size:2.5rem;font-weight:700;text-align:center;color:#7c3aed;margin-bottom:2rem}
-nav{display:flex;justify-content:center;gap:2rem;margin-bottom:3rem;font-size:1.1rem}
-nav a{color:#7c3aed;text-decoration:none;transition:all 0.2s}
-nav a:hover{text-decoration:underline}
-nav a.active{font-weight:600;border-bottom:2px solid #7c3aed}
-section{margin-bottom:4rem}
-h2{font-size:1.75rem;font-weight:700;margin-bottom:1.5rem;padding-left:1rem;border-left:4px solid #7c3aed}
-h2.green{border-left-color:#16a34a}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem}
-.card{background:#f3e8ff;border-radius:1rem;padding:2rem;text-align:center;transition:transform 0.2s,box-shadow 0.2s}
-.card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(124,58,237,0.2)}
-.card.featured{border:4px solid #7c3aed}
-.card.green{background:#dcfce7}
-.card.green:hover{box-shadow:0 8px 20px rgba(22,163,74,0.2)}
-.card.green.featured{border-color:#16a34a}
-.card.disabled{opacity:0.5;cursor:not-allowed}
-.price{font-size:2.5rem;font-weight:800;color:#6d28d9;margin-bottom:0.5rem}
-.card.green .price{color:#15803d}
-.desc{font-size:1.1rem;color:#4b5563;margin-bottom:1.5rem}
-button{width:100%;padding:0.75rem 2rem;font-size:1rem;font-weight:600;border:none;border-radius:0.5rem;cursor:pointer;transition:all 0.2s;color:#fff}
-.btn-purple{background:#7c3aed}
-.btn-purple:hover{background:#6d28d9}
-.btn-green{background:#16a34a}
-.btn-green:hover{background:#15803d}
-button:disabled{background:#d1d5db;cursor:not-allowed}
-footer{text-align:center;margin-top:3rem;color:#6b7280;font-size:0.9rem}
-@media(max-width:768px){
-  h1{font-size:2rem}
-  nav{flex-direction:column;align-items:center;gap:1rem}
-  .grid{grid-template-columns:1fr}
-}
+  body { font-family: sans-serif; text-align: center; padding: 50px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; margin: auto; }
+  .card { border: 1px solid #ccc; padding: 20px; border-radius: 10px; }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>AI 抠图工具</h1>
-  
-  <nav>
-    <a href="/">首页</a>
-    <a href="/pricing.html" class="active">定价</a>
-    <a href="/faq.html">常见问题</a>
-  </nav>
-
-  <section>
-    <h2>积分包（一次性，永久有效）</h2>
-    <div class="grid">
-      <div class="card">
-        <div class="price">$4.99</div>
-        <div class="desc">10 次抠图次数</div>
-        <button class="btn-purple">购买</button>
-      </div>
-      <div class="card featured">
-        <div class="price">$12.99</div>
-        <div class="desc">30 次抠图次数</div>
-        <button class="btn-purple">购买</button>
-      </div>
-      <div class="card">
-        <div class="price">$29.99</div>
-        <div class="desc">80 次抠图次数</div>
-        <button class="btn-purple">购买</button>
-      </div>
+  <h1>选择您的积分包</h1>
+  <div class="grid">
+    <div class="card">
+      <h3>入门包 (10次)</h3>
+      <p>$4.99</p>
+      <div id="paypal-p10"></div>
     </div>
-  </section>
-
-  <section>
-    <h2 class="green">月度订阅套餐</h2>
-    <div class="grid">
-      <div class="card green">
-        <div class="price">$9.99 <span style="font-size:1rem;font-weight:400">/ 月</span></div>
-        <div class="desc">25 次抠图额度</div>
-        <button class="btn-green">订阅</button>
-      </div>
-      <div class="card green featured">
-        <div class="price">$19.99 <span style="font-size:1rem;font-weight:400">/ 月</span></div>
-        <div class="desc">60 次抠图额度</div>
-        <button class="btn-green">订阅</button>
-      </div>
-      <div class="card green disabled">
-        <div class="price">$49.99 <span style="font-size:1rem;font-weight:400">/ 月</span></div>
-        <div class="desc">暂无开放</div>
-        <button disabled>订阅</button>
-      </div>
+    <div class="card">
+      <h3>热门包 (30次)</h3>
+      <p>$12.99</p>
+      <div id="paypal-p30"></div>
     </div>
-  </section>
+    <div class="card">
+      <h3>专业包 (80次)</h3>
+      <p>$29.99</p>
+      <div id="paypal-p80"></div>
+    </div>
+  </div>
 
-  <footer>© 2026 AI 抠图工具 版权所有</footer>
-</div>
+  <script>
+    const API_BASE = 'https://image-bg-remover-api.tyongjian88.workers.dev';
+    const session = localStorage.getItem('session');
+
+    ['p10', 'p30', 'p80'].forEach(plan => {
+      paypal.Buttons({
+        createOrder: async () => {
+          const res = await fetch(API_BASE + '/paypal/create', {
+            method: 'POST',
+            body: JSON.stringify({ plan })
+          });
+          const data = await res.json();
+          return data.id;
+        },
+        onApprove: async (data) => {
+          const res = await fetch(API_BASE + '/paypal/capture', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + session },
+            body: JSON.stringify({ orderID: data.orderID, plan })
+          });
+          if ((await res.json()).success) alert('支付成功，额度已到账！');
+          else alert('支付校验失败，请联系客服');
+        }
+      }).render('#paypal-' + plan);
+    });
+  </script>
 </body>
 </html>

@@ -140,10 +140,66 @@ export default {
       return json({ success: true, remaining: current - 1 });
     }
 
-    // ── 登出 ──
-    if (url.pathname === '/auth/logout') {
-      return Response.redirect(FRONTEND_URL, 302);
+    // ── 支付校验：创建订单 ──
+    if (url.pathname === '/paypal/create' && request.method === 'POST') {
+      const { plan } = await request.json();
+      const plans = {
+        'p10': { price: '4.99', credits: 10 },
+        'p30': { price: '12.99', credits: 30 },
+        'p80': { price: '29.99', credits: 80 }
+      };
+      if (!plans[plan]) return json({ error: 'Invalid plan' }, 400);
+
+      // 获取 PayPal Access Token
+      const auth = btoa(`${env.PAYPAL_CLIENT_ID}:${env.PAYPAL_SECRET}`);
+      const tokenRes = await fetch('https://api-m.paypal.com/v1/oauth2/token', {
+        method: 'POST',
+        headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'grant_type=client_credentials'
+      });
+      const { access_token } = await tokenRes.json();
+
+      // 创建订单
+      const orderRes = await fetch('https://api-m.paypal.com/v2/checkout/orders', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${access_token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          intent: 'CAPTURE',
+          purchase_units: [{ amount: { currency_code: 'USD', value: plans[plan].price } }]
+        })
+      });
+      return json(await orderRes.json());
     }
+
+    // ── 支付校验：完成支付并加分 ──
+    if (url.pathname === '/paypal/capture' && request.method === 'POST') {
+      const { orderID, plan } = await request.json();
+      const plans = { 'p10': 10, 'p30': 30, 'p80': 80 };
+      const session = getSession(request);
+      if (!session) return json({ error: 'Unauthorized' }, 401);
+
+      const auth = btoa(`${env.PAYPAL_CLIENT_ID}:${env.PAYPAL_SECRET}`);
+      const tokenRes = await fetch('https://api-m.paypal.com/v1/oauth2/token', {
+        method: 'POST',
+        headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'grant_type=client_credentials'
+      });
+      const { access_token } = await tokenRes.json();
+
+      const capRes = await fetch(`https://api-m.paypal.com/v2/checkout/orders/${orderID}/capture`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${access_token}`, 'Content-Type': 'application/json' }
+      });
+      const capData = await capRes.json();
+
+      if (capData.status === 'COMPLETED') {
+        await env.DB.prepare('UPDATE user_credits SET credits = credits + ? WHERE google_id = ?')
+          .bind(plans[plan], session.id).run();
+        return json({ success: true });
+      }
+      return json({ error: 'Payment capture failed' }, 400);
+    }
+
 
     return new Response('Not Found', { status: 404 });
   }
