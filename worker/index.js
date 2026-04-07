@@ -157,7 +157,9 @@ export default {
         headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'grant_type=client_credentials'
       });
-      const { access_token } = await tokenRes.json();
+      const tokenData = await tokenRes.json();
+      if (!tokenData.access_token) return json({ error: 'PayPal Auth Failed', debug: tokenData }, 400);
+      const { access_token } = tokenData;
 
       // 创建订单
       const orderRes = await fetch('https://api-m.paypal.com/v2/checkout/orders', {
