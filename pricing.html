@@ -8,6 +8,7 @@
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; margin: 40px auto; }
         .card { border: 1px solid #ddd; padding: 20px; border-radius: 12px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         button { padding: 15px 30px; font-size: 16px; cursor: pointer; margin: 10px; background: #0070ba; color: white; border: none; border-radius: 25px; }
+        button:hover { background: #005ea6; }
     </style>
 </head>
 <body>
@@ -16,22 +17,23 @@
         <div class="card">
             <h3>入门包 (10次)</h3>
             <p>$4.99</p>
-            <button onclick="handlePayment('p10')">通过 PayPal 购买</button>
+            <button onclick="pay('p10')">PayPal 支付</button>
         </div>
         <div class="card">
             <h3>热门包 (30次)</h3>
             <p>$12.99</p>
-            <button onclick="handlePayment('p30')">通过 PayPal 购买</button>
+            <button onclick="pay('p30')">PayPal 支付</button>
         </div>
         <div class="card">
             <h3>专业包 (80次)</h3>
             <p>$29.99</p>
-            <button onclick="handlePayment('p80')">通过 PayPal 购买</button>
+            <button onclick="pay('p80')">PayPal 支付</button>
         </div>
     </div>
 
     <script>
-        async function handlePayment(plan) {
+        async function pay(plan) {
+            console.log("准备支付:", plan);
             try {
                 const res = await fetch('https://image-bg-remover-api.tyongjian88.workers.dev/paypal/create', {
                     method: 'POST',
@@ -39,15 +41,21 @@
                     body: JSON.stringify({ plan })
                 });
                 const data = await res.json();
+                console.log("服务器响应:", data);
                 
-                const approveLink = data.links?.find(l => l.rel === 'approve');
-                if (approveLink) {
-                    window.location.href = approveLink.href;
+                if (data.links) {
+                    const approveLink = data.links.find(l => l.rel === 'approve');
+                    if (approveLink) {
+                        window.location.href = approveLink.href;
+                    } else {
+                        alert('订单创建成功但无跳转链接，请联系管理员');
+                    }
                 } else {
                     alert('订单创建失败：' + JSON.stringify(data));
                 }
             } catch (err) {
-                alert('连接服务器失败：' + err.message);
+                console.error("Fetch 错误:", err);
+                alert('连接服务器失败，请检查网络');
             }
         }
     </script>
