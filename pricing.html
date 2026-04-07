@@ -1,68 +1,55 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>购买积分 - AI 抠图</title>
-<script src="https://www.paypal.com/sdk/js?client-id=ATu2bK9T85J56j0-L40yJ0D7rS3pLq1O_47z3gQeQk9nS6yY4O47S2u_z1b63H52uS1I7g5lKz4n0L3x&currency=USD"></script>
-<style>
-  body { font-family: sans-serif; text-align: center; padding: 50px; background: #f9fafb; }
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; margin: 40px auto; }
-  .card { border: 1px solid #ddd; padding: 20px; border-radius: 12px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-  h3 { margin-bottom: 10px; }
-  .paypal-button-container { margin-top: 20px; min-height: 55px; }
-</style>
+    <meta charset="UTF-8">
+    <title>购买积分 - AI 抠图</title>
+    <style>
+        body { text-align: center; padding: 50px; font-family: sans-serif; background: #f9fafb; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; margin: 40px auto; }
+        .card { border: 1px solid #ddd; padding: 20px; border-radius: 12px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        button { padding: 15px 30px; font-size: 16px; cursor: pointer; margin: 10px; background: #0070ba; color: white; border: none; border-radius: 25px; }
+    </style>
 </head>
 <body>
-  <h1>选择您的积分包</h1>
-  <div class="grid">
-    <div class="card">
-      <h3>入门包 (10次)</h3>
-      <p>$4.99</p>
-      <div id="paypal-p10" class="paypal-button-container"></div>
+    <h1>选择您的积分包</h1>
+    <div class="grid">
+        <div class="card">
+            <h3>入门包 (10次)</h3>
+            <p>$4.99</p>
+            <button onclick="handlePayment('p10')">通过 PayPal 购买</button>
+        </div>
+        <div class="card">
+            <h3>热门包 (30次)</h3>
+            <p>$12.99</p>
+            <button onclick="handlePayment('p30')">通过 PayPal 购买</button>
+        </div>
+        <div class="card">
+            <h3>专业包 (80次)</h3>
+            <p>$29.99</p>
+            <button onclick="handlePayment('p80')">通过 PayPal 购买</button>
+        </div>
     </div>
-    <div class="card">
-      <h3>热门包 (30次)</h3>
-      <p>$12.99</p>
-      <div id="paypal-p30" class="paypal-button-container"></div>
-    </div>
-    <div class="card">
-      <h3>专业包 (80次)</h3>
-      <p>$29.99</p>
-      <div id="paypal-p80" class="paypal-button-container"></div>
-    </div>
-  </div>
 
-  <script>
-    const API_BASE = 'https://image-bg-remover-api.tyongjian88.workers.dev';
-    const session = localStorage.getItem('session');
-
-    window.addEventListener('load', () => {
-        if (typeof paypal !== 'undefined') {
-            ['p10', 'p30', 'p80'].forEach(plan => {
-                paypal.Buttons({
-                    createOrder: async () => {
-                        const res = await fetch(API_BASE + '/paypal/create', {
-                            method: 'POST',
-                            body: JSON.stringify({ plan })
-                        });
-                        const data = await res.json();
-                        return data.id;
-                    },
-                    onApprove: async (data) => {
-                        const res = await fetch(API_BASE + '/paypal/capture', {
-                            method: 'POST',
-                            headers: { 'Authorization': 'Bearer ' + session },
-                            body: JSON.stringify({ orderID: data.orderID, plan })
-                        });
-                        const result = await res.json();
-                        if (result.success) alert('支付成功，额度已到账！');
-                        else alert('支付校验失败，请联系客服');
-                    }
-                }).render('#paypal-' + plan);
-            });
+    <script>
+        async function handlePayment(plan) {
+            try {
+                const res = await fetch('https://image-bg-remover-api.tyongjian88.workers.dev/paypal/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan })
+                });
+                const data = await res.json();
+                
+                const approveLink = data.links?.find(l => l.rel === 'approve');
+                if (approveLink) {
+                    window.location.href = approveLink.href;
+                } else {
+                    alert('订单创建失败：' + JSON.stringify(data));
+                }
+            } catch (err) {
+                alert('连接服务器失败：' + err.message);
+            }
         }
-    });
-  </script>
+    </script>
 </body>
 </html>
