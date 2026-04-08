@@ -152,7 +152,7 @@ export default {
 
       // 获取 PayPal Access Token
       const auth = btoa(`${env.PAYPAL_CLIENT_ID}:${env.PAYPAL_SECRET}`);
-      const tokenRes = await fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
+      const tokenRes = await fetch('https://api-m.paypal.com/v1/oauth2/token', {
         method: 'POST',
         headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'grant_type=client_credentials'
@@ -162,7 +162,7 @@ export default {
       const { access_token } = tokenData;
 
       // 创建订单
-      const orderRes = await fetch('https://api-m.sandbox.paypal.com/v2/checkout/orders', {
+      const orderRes = await fetch('https://api-m.paypal.com/v2/checkout/orders', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${access_token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -187,14 +187,14 @@ export default {
       if (!session) return json({ error: 'Unauthorized' }, 401);
 
       const auth = btoa(`${env.PAYPAL_CLIENT_ID}:${env.PAYPAL_SECRET}`);
-      const tokenRes = await fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
+      const tokenRes = await fetch('https://api-m.paypal.com/v1/oauth2/token', {
         method: 'POST',
         headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'grant_type=client_credentials'
       });
       const { access_token } = await tokenRes.json();
 
-      const capRes = await fetch(`https://api-m.sandbox.paypal.com/v2/checkout/orders/${orderID}/capture`, {
+      const capRes = await fetch(`https://api-m.paypal.com/v2/checkout/orders/${orderID}/capture`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${access_token}`, 'Content-Type': 'application/json' }
       });
