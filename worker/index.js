@@ -167,7 +167,13 @@ export default {
         headers: { 'Authorization': `Bearer ${access_token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           intent: 'CAPTURE',
-          purchase_units: [{ amount: { currency_code: 'USD', value: plans[plan].price } }]
+          purchase_units: [{ amount: { currency_code: 'USD', value: plans[plan].price } }],
+          application_context: {
+            return_url: `https://image-background-remover.quest/pricing.html?capture=1&plan=${plan}`,
+            cancel_url: 'https://image-background-remover.quest/pricing.html?cancel=1',
+            brand_name: 'AI 抠图工具',
+            user_action: 'PAY_NOW'
+          }
         })
       });
       return json(await orderRes.json());

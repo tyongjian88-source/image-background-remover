@@ -9,10 +9,14 @@
         .card { border: 1px solid #ddd; padding: 20px; border-radius: 12px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         button { padding: 15px 30px; font-size: 16px; cursor: pointer; margin: 10px; background: #0070ba; color: white; border: none; border-radius: 25px; }
         button:hover { background: #005ea6; }
+        .msg { margin: 20px auto; max-width: 500px; padding: 16px; border-radius: 10px; font-size: 1rem; }
+        .msg.success { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
+        .msg.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     </style>
 </head>
 <body>
     <h1>选择您的积分包</h1>
+    <div id="msgBox"></div>
     <div class="grid">
         <div class="card">
             <h3>入门包 (10次)</h3>
@@ -32,31 +36,60 @@
     </div>
 
     <script>
-        async function pay(plan) {
-            console.log("准备支付:", plan);
+        const API_BASE = 'https://image-bg-remover-api.tyongjian88.workers.dev';
+        const session = localStorage.getItem('session');
+
+        // 处理 PayPal 支付回调
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('capture') === '1') {
+            const token = params.get('token');
+            const plan = params.get('plan');
+            captureOrder(token, plan);
+        } else if (params.get('cancel') === '1') {
+            showMsg('支付已取消', 'error');
+        }
+
+        async function captureOrder(token, plan) {
+            showMsg('正在确认支付...', 'success');
             try {
-                const res = await fetch('https://image-bg-remover-api.tyongjian88.workers.dev/paypal/create', {
+                const res = await fetch(API_BASE + '/paypal/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session },
+                    body: JSON.stringify({ orderID: token, plan })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMsg('✅ 支付成功！额度已到账，请返回主页使用', 'success');
+                    window.history.replaceState({}, '', '/pricing.html');
+                } else {
+                    showMsg('❌ 支付校验失败：' + JSON.stringify(data), 'error');
+                }
+            } catch (err) {
+                showMsg('❌ 网络错误：' + err.message, 'error');
+            }
+        }
+
+        async function pay(plan) {
+            try {
+                const res = await fetch(API_BASE + '/paypal/create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ plan })
                 });
                 const data = await res.json();
-                console.log("服务器响应:", data);
-                
-                if (data.links) {
-                    const approveLink = data.links.find(l => l.rel === 'approve');
-                    if (approveLink) {
-                        window.location.href = approveLink.href;
-                    } else {
-                        alert('订单创建成功但无跳转链接，请联系管理员');
-                    }
+                const approveLink = data.links?.find(l => l.rel === 'approve');
+                if (approveLink) {
+                    window.location.href = approveLink.href;
                 } else {
-                    alert('订单创建失败：' + JSON.stringify(data));
+                    showMsg('❌ 订单创建失败：' + JSON.stringify(data), 'error');
                 }
             } catch (err) {
-                console.error("Fetch 错误:", err);
-                alert('连接服务器失败，请检查网络');
+                showMsg('❌ 连接失败：' + err.message, 'error');
             }
+        }
+
+        function showMsg(text, type) {
+            document.getElementById('msgBox').innerHTML = `<div class="msg ${type}">${text}</div>`;
         }
     </script>
 </body>
