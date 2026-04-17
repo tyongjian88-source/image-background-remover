@@ -1,96 +1,260 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>购买积分 - AI 抠图</title>
-    <style>
-        body { text-align: center; padding: 50px; font-family: sans-serif; background: #f9fafb; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; margin: 40px auto; }
-        .card { border: 1px solid #ddd; padding: 20px; border-radius: 12px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        button { padding: 15px 30px; font-size: 16px; cursor: pointer; margin: 10px; background: #0070ba; color: white; border: none; border-radius: 25px; }
-        button:hover { background: #005ea6; }
-        .msg { margin: 20px auto; max-width: 500px; padding: 16px; border-radius: 10px; font-size: 1rem; }
-        .msg.success { background: #dcfce7; color: #16a34a; border: 1px solid #86efac; }
-        .msg.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>定价 — AI 抠图工具</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f9fafb;color:#1f2937;min-height:100vh}
+.navbar{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:10}
+.navbar-brand{font-size:1.2rem;font-weight:800;color:#7c3aed;text-decoration:none}
+.navbar-right{display:flex;gap:12px;align-items:center}
+.btn-nav{padding:6px 16px;border-radius:8px;font-size:0.85rem;text-decoration:none;color:#6b7280;border:1px solid #e5e7eb;transition:all 0.2s}
+.btn-nav:hover{background:#f3f4f6}
+.btn-nav.primary{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.btn-nav.primary:hover{background:#6d28d9}
+
+.hero{text-align:center;padding:60px 24px 48px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.hero h1{font-size:2.5rem;font-weight:800;margin-bottom:12px}
+.hero p{font-size:1.1rem;opacity:0.9;max-width:500px;margin:0 auto}
+
+.container{max-width:960px;margin:0 auto;padding:48px 24px}
+
+.toggle-wrap{display:flex;justify-content:center;margin-bottom:40px;gap:0}
+.toggle-btn{padding:10px 28px;font-size:0.95rem;font-weight:600;border:2px solid #7c3aed;cursor:pointer;transition:all 0.2s;background:#fff;color:#7c3aed}
+.toggle-btn:first-child{border-radius:10px 0 0 10px}
+.toggle-btn:last-child{border-radius:0 10px 10px 0}
+.toggle-btn.active{background:#7c3aed;color:#fff}
+
+.section-title{font-size:1.3rem;font-weight:700;color:#374151;margin-bottom:24px;text-align:center}
+
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:60px}
+.plan-card{background:#fff;border:2px solid #e5e7eb;border-radius:16px;padding:28px 24px;text-align:center;position:relative;transition:all 0.2s}
+.plan-card:hover{border-color:#7c3aed;transform:translateY(-2px);box-shadow:0 12px 30px rgba(124,58,237,0.15)}
+.plan-card.featured{border-color:#7c3aed;box-shadow:0 8px 24px rgba(124,58,237,0.2)}
+.plan-card.featured-green{border-color:#16a34a;box-shadow:0 8px 24px rgba(22,163,74,0.2)}
+.plan-card.featured-green:hover{border-color:#16a34a;box-shadow:0 12px 30px rgba(22,163,74,0.2)}
+.badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#7c3aed;color:#fff;font-size:0.72rem;font-weight:700;padding:3px 14px;border-radius:20px;white-space:nowrap}
+.badge.green{background:#16a34a}
+.plan-name{font-size:1rem;font-weight:600;color:#6b7280;margin-bottom:8px}
+.plan-price{font-size:2.4rem;font-weight:800;color:#1f2937;margin-bottom:4px}
+.plan-price span{font-size:1rem;font-weight:400;color:#6b7280}
+.plan-credits{font-size:0.9rem;color:#6b7280;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #f3f4f6}
+.plan-features{list-style:none;margin-bottom:24px;text-align:left}
+.plan-features li{display:flex;align-items:center;gap:8px;font-size:0.88rem;color:#4b5563;padding:5px 0}
+.plan-features li::before{content:"✓";color:#7c3aed;font-weight:700;flex-shrink:0}
+.plan-features.green li::before{color:#16a34a}
+.btn-pay{width:100%;padding:12px;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;background:#7c3aed;color:#fff}
+.btn-pay:hover{background:#6d28d9;transform:translateY(-1px)}
+.btn-pay.green{background:#16a34a}
+.btn-pay.green:hover{background:#15803d}
+.btn-pay:disabled{background:#d1d5db;cursor:not-allowed;transform:none}
+
+.msg{margin:16px 0;padding:14px;border-radius:10px;font-size:0.9rem;text-align:center}
+.msg.success{background:#dcfce7;color:#16a34a;border:1px solid #86efac}
+.msg.error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.msg.info{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+
+.faq{max-width:680px;margin:0 auto 60px}
+.faq h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:32px}
+.faq-item{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px 24px;margin-bottom:12px}
+.faq-q{font-weight:700;color:#1f2937;margin-bottom:8px}
+.faq-a{color:#6b7280;font-size:0.9rem;line-height:1.6}
+
+footer{text-align:center;padding:24px;color:#9ca3af;font-size:0.82rem;border-top:1px solid #e5e7eb;background:#fff}
+
+@media(max-width:768px){
+  .plans-grid{grid-template-columns:1fr}
+  .hero h1{font-size:1.8rem}
+}
+</style>
 </head>
 <body>
-    <h1>选择您的积分包</h1>
-    <div id="msgBox"></div>
-    <div class="grid">
-        <div class="card">
-            <h3>入门包 (10次)</h3>
-            <p>$4.99</p>
-            <button onclick="pay('p10')">PayPal 支付</button>
-        </div>
-        <div class="card">
-            <h3>热门包 (30次)</h3>
-            <p>$12.99</p>
-            <button onclick="pay('p30')">PayPal 支付</button>
-        </div>
-        <div class="card">
-            <h3>专业包 (80次)</h3>
-            <p>$29.99</p>
-            <button onclick="pay('p80')">PayPal 支付</button>
-        </div>
+
+<nav class="navbar">
+  <a href="/static.html" class="navbar-brand">✂️ AI 抠图</a>
+  <div class="navbar-right">
+    <a href="/static.html" class="btn-nav">回到主页</a>
+    <a href="/static.html" class="btn-nav primary">开始使用</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>简单透明的定价</h1>
+  <p>按需购买，无隐藏费用。选择最适合你的方案。</p>
+</div>
+
+<div class="container">
+  <div id="msgBox"></div>
+
+  <!-- 积分包 -->
+  <div class="section-title">🎁 积分包（一次性购买，永久有效）</div>
+  <div class="plans-grid">
+    <div class="plan-card">
+      <div class="plan-name">入门包</div>
+      <div class="plan-price">$4.99</div>
+      <div class="plan-credits">10 次抠图额度</div>
+      <ul class="plan-features">
+        <li>高质量 AI 抠图</li>
+        <li>透明 PNG 下载</li>
+        <li>永久有效</li>
+      </ul>
+      <button class="btn-pay" onclick="pay('p10')">PayPal 支付</button>
     </div>
+    <div class="plan-card featured">
+      <div class="badge">🔥 最受欢迎</div>
+      <div class="plan-name">热门包</div>
+      <div class="plan-price">$12.99</div>
+      <div class="plan-credits">30 次抠图额度</div>
+      <ul class="plan-features">
+        <li>高质量 AI 抠图</li>
+        <li>透明 PNG 下载</li>
+        <li>永久有效</li>
+        <li>每张仅 $0.43</li>
+      </ul>
+      <button class="btn-pay" onclick="pay('p30')">PayPal 支付</button>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">专业包</div>
+      <div class="plan-price">$29.99</div>
+      <div class="plan-credits">80 次抠图额度</div>
+      <ul class="plan-features">
+        <li>高质量 AI 抠图</li>
+        <li>透明 PNG 下载</li>
+        <li>永久有效</li>
+        <li>每张仅 $0.37</li>
+      </ul>
+      <button class="btn-pay" onclick="pay('p80')">PayPal 支付</button>
+    </div>
+  </div>
 
-    <script>
-        const API_BASE = 'https://image-bg-remover-api.tyongjian88.workers.dev';
-        const session = localStorage.getItem('session');
+  <!-- 月订阅 -->
+  <div class="section-title">📅 月度订阅（每月自动续费）</div>
+  <div class="plans-grid" style="max-width:640px;margin:0 auto 60px;grid-template-columns:1fr 1fr">
+    <div class="plan-card featured-green">
+      <div class="plan-name">基础订阅</div>
+      <div class="plan-price">$9.99<span>/月</span></div>
+      <div class="plan-credits">25 次/月额度</div>
+      <ul class="plan-features green">
+        <li>每月自动续费</li>
+        <li>高质量 AI 抠图</li>
+        <li>未用额度不累积</li>
+      </ul>
+      <button class="btn-pay green" onclick="alert('月订阅功能即将上线，敬请期待！')">即将上线</button>
+    </div>
+    <div class="plan-card featured-green">
+      <div class="badge green">💎 最优惠</div>
+      <div class="plan-name">专业订阅</div>
+      <div class="plan-price">$19.99<span>/月</span></div>
+      <div class="plan-credits">60 次/月额度</div>
+      <ul class="plan-features green">
+        <li>每月自动续费</li>
+        <li>高质量 AI 抠图</li>
+        <li>优先处理队列</li>
+        <li>每张仅 $0.33</li>
+      </ul>
+      <button class="btn-pay green" onclick="alert('月订阅功能即将上线，敬请期待！')">即将上线</button>
+    </div>
+  </div>
 
-        // 处理 PayPal 支付回调
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('capture') === '1') {
-            const token = params.get('token');
-            const plan = params.get('plan');
-            captureOrder(token, plan);
-        } else if (params.get('cancel') === '1') {
-            showMsg('支付已取消', 'error');
-        }
+  <!-- FAQ -->
+  <div class="faq">
+    <h2>常见问题</h2>
+    <div class="faq-item">
+      <div class="faq-q">💳 支持哪些支付方式？</div>
+      <div class="faq-a">目前支持 PayPal 付款，包括 PayPal 账户余额、信用卡和借记卡。</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">🎁 注册有免费额度吗？</div>
+      <div class="faq-a">是的！使用 Google 账号注册后，系统会自动赠送 3 次免费抠图额度，无需付款即可体验。</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">⏰ 积分包会过期吗？</div>
+      <div class="faq-a">积分包一次性购买，永久有效，没有使用期限限制。</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">🔒 我的图片安全吗？</div>
+      <div class="faq-a">我们不存储任何上传的图片。图片仅用于实时处理，处理完成后立即丢弃，完全保护您的隐私。</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">🔄 购买后如何退款？</div>
+      <div class="faq-a">如果购买后未使用任何额度，可在 24 小时内联系我们申请退款。已使用的额度不支持退款。</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">📧 如何联系客服？</div>
+      <div class="faq-a">如有任何问题，请发邮件至客服邮箱，我们将在 1 个工作日内回复。</div>
+    </div>
+  </div>
+</div>
 
-        async function captureOrder(token, plan) {
-            showMsg('正在确认支付...', 'success');
-            try {
-                const res = await fetch(API_BASE + '/paypal/capture', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session },
-                    body: JSON.stringify({ orderID: token, plan })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showMsg('✅ 支付成功！额度已到账，请返回主页使用', 'success');
-                    window.history.replaceState({}, '', '/pricing.html');
-                } else {
-                    showMsg('❌ 支付校验失败：' + JSON.stringify(data), 'error');
-                }
-            } catch (err) {
-                showMsg('❌ 网络错误：' + err.message, 'error');
-            }
-        }
+<footer>© 2026 AI 抠图工具 · 图片不存储，安全可靠</footer>
 
-        async function pay(plan) {
-            try {
-                const res = await fetch(API_BASE + '/paypal/create', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ plan })
-                });
-                const data = await res.json();
-                const approveLink = data.links?.find(l => l.rel === 'approve');
-                if (approveLink) {
-                    window.location.href = approveLink.href;
-                } else {
-                    showMsg('❌ 订单创建失败：' + JSON.stringify(data), 'error');
-                }
-            } catch (err) {
-                showMsg('❌ 连接失败：' + err.message, 'error');
-            }
-        }
+<script>
+const API_BASE = 'https://image-bg-remover-api.tyongjian88.workers.dev';
+const session = localStorage.getItem('session');
 
-        function showMsg(text, type) {
-            document.getElementById('msgBox').innerHTML = `<div class="msg ${type}">${text}</div>`;
-        }
-    </script>
+// 处理 PayPal 支付回调
+const params = new URLSearchParams(window.location.search);
+if (params.get('capture') === '1') {
+  const token = params.get('token');
+  const plan = params.get('plan');
+  captureOrder(token, plan);
+} else if (params.get('cancel') === '1') {
+  showMsg('支付已取消', 'info');
+  window.history.replaceState({}, '', '/pricing.html');
+}
+
+async function captureOrder(token, plan) {
+  showMsg('正在确认支付，请稍候...', 'info');
+  try {
+    const res = await fetch(API_BASE + '/paypal/capture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session },
+      body: JSON.stringify({ orderID: token, plan })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showMsg('✅ 支付成功！额度已到账。<a href="/static.html" style="color:#16a34a;font-weight:700">返回主页开始使用 →</a>', 'success');
+    } else {
+      showMsg('❌ 支付校验失败，请联系客服', 'error');
+    }
+  } catch (err) {
+    showMsg('❌ 网络错误：' + err.message, 'error');
+  }
+  window.history.replaceState({}, '', '/pricing.html');
+}
+
+async function pay(plan) {
+  if (!session) { alert('请先登录后再购买'); window.location.href = '/static.html'; return; }
+  const btns = document.querySelectorAll('.btn-pay');
+  btns.forEach(b => b.disabled = true);
+  showMsg('正在创建订单...', 'info');
+  try {
+    const res = await fetch(API_BASE + '/paypal/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan })
+    });
+    const data = await res.json();
+    const approveLink = data.links?.find(l => l.rel === 'approve');
+    if (approveLink) {
+      window.location.href = approveLink.href;
+    } else {
+      showMsg('❌ 订单创建失败：' + JSON.stringify(data), 'error');
+      btns.forEach(b => b.disabled = false);
+    }
+  } catch (err) {
+    showMsg('❌ 连接失败：' + err.message, 'error');
+    btns.forEach(b => b.disabled = false);
+  }
+}
+
+function showMsg(html, type) {
+  const box = document.getElementById('msgBox');
+  box.innerHTML = `<div class="msg ${type}">${html}</div>`;
+  box.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
 </body>
 </html>
